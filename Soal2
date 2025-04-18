@@ -1,1 +1,40 @@
-//Kerjakan soal nomor 2 disini (Hapus komentar ini)
+#include <iostream>
+#include <string>
+#include <iomanip>
+using namespace std;
+
+int main() {
+    system ("cls");
+    string kartu;
+    int total = 0, digit, i;
+
+    cout << "Masukkan nomor kartu digital: ";
+    cin >> kartu;
+
+    if (kartu.length() == 14 && kartu.substr(0, 2) == "65") {
+        cout << "Tipe kartu: NUSANTARA\n";
+
+        for (i = kartu.length() - 2; i >= 0; i -= 2) {
+            digit = (kartu[i] - '0') * 2;
+            if (digit > 9) digit -= 9;
+            total += digit;
+        }
+        for (i = kartu.length() - 1; i >= 0; i -= 2) {
+            total += (kartu[i] - '0');
+        }
+
+        if (total % 10 == 0) cout << "Nomor kartu VALID.\n";
+        else cout << "Nomor kartu TIDAK VALID.\n";
+    } else {
+        cout << "Nomor kartu tidak sesuai format kartu NUSANTARA.\n";
+    }
+
+    return 0;
+}
+
+/*
+Penjelasan:
+- Input nomor dicek apakah 14 digit dan diawali '65'.
+- Proses validasi sama seperti sebelumnya (algoritma Nusantara).
+- Hasil print tipe kartu dan valid/tidak valid.
+*/
