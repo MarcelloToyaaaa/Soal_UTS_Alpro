@@ -1,1 +1,39 @@
-//Kerjakan soal nomor 4 disini (Hapus komentar ini)
+#include <iostream>
+#include <string>
+#include <iomanip>
+using namespace std;
+
+int main() {
+    system ("cls");
+    string kartu;
+    int digit, total = 0, i;
+
+    cout << "Masukkan nomor kartu digital: ";
+    cin >> kartu;
+
+    if (kartu.length() == 15 && kartu[0] == '9') {
+        cout << "Tipe kartu: MERDEKA\n";
+
+        for (i = kartu.length() - 2; i >= 0; i -= 2) {
+            digit = (kartu[i] - '0') * 2;
+            if (digit > 9) digit -= 9;
+            total += digit;
+        }
+        for (i = kartu.length() - 1; i >= 0; i -= 2) {
+            total += (kartu[i] - '0');
+        }
+
+        if (total % 10 == 0) cout << "Nomor kartu VALID.\n";
+        else cout << "Nomor kartu TIDAK VALID.\n";
+    } else {
+        cout << "Nomor kartu tidak sesuai format kartu MERDEKA.\n";
+    }
+    return 0;
+}
+
+/*
+Penjelasan:
+- MERDEKA dicek berdasarkan panjang 15 dan awalan 9.
+- Validasi pakai logika yang sama: digit selang-seling dikali 2 dari belakang,
+  lalu total dicek apakah habis dibagi 10.
+*/
