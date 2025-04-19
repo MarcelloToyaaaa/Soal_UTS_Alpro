@@ -1,40 +1,74 @@
 #include <iostream>
-#include <string>
-#include <iomanip>
+#include <stdio.h>
+#include <stdlib.h>
 using namespace std;
 
 int main() {
     system ("cls");
-    string kartu;
-    int total = 0, digit, i;
+    long long kode;
+    int keluar, d[10], jenis, jam_masuk, menit_masuk;
+    int masuk_menit, keluar_menit, durasi, jam, tarif_awal, tarif_next, total, lokasi;
+    string nama;
 
-    cout << "Masukkan nomor kartu digital: ";
-    cin >> kartu;
+    cout << "Masukkan kode parkir digital (10 digit): ";
+    cin >> kode;
+    cout << "Masukkan jam keluar (format HHMM): ";
+    cin >> keluar;
 
-    if (kartu.length() == 14 && kartu.substr(0, 2) == "65") {
-        cout << "Tipe kartu: NUSANTARA\n";
-
-        for (i = kartu.length() - 2; i >= 0; i -= 2) {
-            digit = (kartu[i] - '0') * 2;
-            if (digit > 9) digit -= 9;
-            total += digit;
-        }
-        for (i = kartu.length() - 1; i >= 0; i -= 2) {
-            total += (kartu[i] - '0');
-        }
-
-        if (total % 10 == 0) cout << "Nomor kartu VALID.\n";
-        else cout << "Nomor kartu TIDAK VALID.\n";
-    } else {
-        cout << "Nomor kartu tidak sesuai format kartu NUSANTARA.\n";
+    for (int i = 9; i >= 0; i--) {
+        d[i] = kode % 10;
+        kode /= 10;
     }
+
+    jenis = d[0] * 10 + d[1];
+    jam_masuk = d[2] * 10 + d[3];
+    menit_masuk = d[4] * 10 + d[5];
+    masuk_menit = jam_masuk * 60 + menit_masuk;
+    keluar_menit = (keluar / 100) * 60 + (keluar % 100);
+    if (keluar_menit < masuk_menit) keluar_menit += 1440;
+
+    durasi = keluar_menit - masuk_menit;
+    jam = durasi / 60 + (durasi % 60 != 0);
+
+    lokasi = d[6]*1000 + d[7]*100 + d[8]*10 + d[9];
+
+    if (jenis == 10) {
+        nama = "Mobil pribadi"; tarif_awal = 5000; tarif_next = 3000;
+    } else if (jenis == 20) {
+        nama = "Motor"; tarif_awal = 3000; tarif_next = 2000;
+    } else if (jenis == 30) {
+        nama = "Bus"; tarif_awal = 10000; tarif_next = 7000;
+    } else {
+        cout << "Jenis tidak dikenali\n";
+        return 0;
+    }
+
+    total = tarif_awal + (jam - 1) * tarif_next * (jam > 1);
+
+    cout << "\n--- Ringkasan Parkir ---\n";
+    cout << "Jenis kendaraan: " << nama << endl;
+    printf("Waktu masuk   : %02d:%02d\n", jam_masuk, menit_masuk);
+    printf("Waktu keluar  : %02d:%02d\n", keluar / 100, keluar % 100);
+    cout << "Durasi parkir : " << jam << " jam\n";
+    cout << "Lokasi parkir : " << lokasi << endl;
+    cout << "Total biaya   : Rp " << total << endl;
 
     return 0;
 }
 
 /*
-Penjelasan:
-- Input nomor dicek apakah 14 digit dan diawali '65'.
-- Proses validasi sama seperti sebelumnya (algoritma Nusantara).
-- Hasil print tipe kartu dan valid/tidak valid.
+--- Penjelasan logika program ---
+
+1. Ambil input kode parkir (10 digit angka) dan jam keluar (format HHMM).
+2. Pecah kode parkir jadi array angka biar bisa diolah tiap digit-nya.
+3. Ambil 2 digit pertama buat tentuin jenis kendaraan.
+   - Misalnya 10 = mobil, 20 = motor, 30 = bus.
+4. Ambil 4 digit berikut buat waktu masuk (jam dan menit).
+5. Hitung total menit dari jam masuk dan jam keluar.
+6. Kalau jam keluar lebih kecil dari jam masuk → berarti lewat tengah malam, tambahin 24 jam.
+7. Hitung durasi parkir dalam menit, terus konversi ke jam dan dibulatkan ke atas.
+8. Tarif dihitung pakai tarif jam pertama dan tarif jam-jam selanjutnya.
+9. Terakhir, tampilkan semua info: jenis, jam masuk, keluar, durasi, dan total bayar.
+
+Sip, programnya simpel tapi ngitungnya aman walau pusing dikit ga ngaruh.
 */
