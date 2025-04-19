@@ -1,43 +1,66 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <iostream>
+using namespace std;
 
-int main() {
-    system ("cls");
-    char kartu[20];
-    int i, panjang, digit, total = 0;
+void validasiNusantara(const char kartu[], int panjang) {
+    int i, total = 0, digit;
 
-    printf("Masukkan nomor kartu digital: ");
-    scanf("%s", kartu);
+    for (i = panjang - 2; i >= 0; i -= 2) {
+        digit = (kartu[i] - '0') * 2;
+        if (digit > 9) digit -= 9;
+        total += digit;
+    }
+    for (i = panjang - 1; i >= 0; i -= 2) {
+        total += (kartu[i] - '0');
+    }
 
-    panjang = strlen(kartu);
+    if (total % 10 == 0) {
+        cout << "Nomor kartu VALID." << endl;
+    } else {
+        cout << "Nomor kartu TIDAK VALID." << endl;
+    }
+}
+
+void cekKartu() {
+    char kartu[25];
+    int panjang = 0, i = 0;
+
+    cout << "Masukkan nomor kartu digital: ";
+    while (1) {
+        kartu[i] = getchar();
+        if (kartu[i] == '\n') break;
+        panjang++;
+        i++;
+    }
 
     if (panjang == 14 && kartu[0] == '6' && kartu[1] == '5') {
-        printf("Tipe kartu: NUSANTARA\n");
-
-        for (i = panjang - 2; i >= 0; i -= 2) {
-            digit = (kartu[i] - '0') * 2;
-            if (digit > 9) digit -= 9;
-            total += digit;
-        }
-        for (i = panjang - 1; i >= 0; i -= 2) {
-            total += (kartu[i] - '0');
-        }
-
-        if (total % 10 == 0) printf("Nomor kartu VALID.\n");
-        else printf("Nomor kartu TIDAK VALID.\n");
+        cout << "Tipe kartu: NUSANTARA" << endl;
+        validasiNusantara(kartu, panjang);
+    } else if (panjang == 16 && ((kartu[0] == '7' && kartu[1] == '7') || (kartu[0] == '7' && kartu[1] == '8'))) {
+        cout << "Tipe kartu: GARUDA" << endl;
+        validasiNusantara(kartu, panjang);
+    } else if (panjang == 15 && kartu[0] == '9') {
+        cout << "Tipe kartu: MERDEKA" << endl;
+        validasiNusantara(kartu, panjang);
     } else {
-        printf("Nomor kartu tidak sesuai format kartu NUSANTARA.\n");
+        cout << "Nomor kartu tidak dikenali." << endl;
     }
+}
+
+int main() {
+    system("cls");
+    cekKartu();
     return 0;
 }
 
-/*
-Penjelasan singkat:
-- Program ini membaca input nomor kartu dari user.
-- Diperiksa panjangnya 14 digit dan diawali dengan 65 untuk menentukan jenis NUSANTARA.
-- Validasi dilakukan dengan algoritma: digit ke-2 dari belakang dikali 2 tiap selang 2 angka,
-  jika hasil >9 dikurang 9, lalu dijumlahkan semua digit dan dicek habis dibagi 10 atau nggak.
-- Output akan menyebut jenis kartu dan status valid/tidak.
-*/
 
+/*
+Jadi ini program kombinasi C dan C++. Yang bagian logika dasar (kayak string, strlen, sistem validasi) pakai gaya C.
+Tapi buat input/output, kita bumbuin dikit dengan gaya C++: pakai cout dan cin biar keliatan beda.
+
+Program ini bisa ngecek 3 jenis kartu: NUSANTARA, GARUDA, dan MERDEKA. Dicek dulu jenis kartunya dari panjang dan digit awal,
+habis itu divalidasi pake algoritma modifikasi dari Luhn. Yang intinya: digit selang-seling dikali 2, kalau lebih dari 9 dikurangin 9,
+habis itu dijumlahin semua digit, terus dicek habis dibagi 10 nggak.
+
+*/
